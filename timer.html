@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>My Prep</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --panel:#14171d; --text:#e8e9ec; --muted:#9aa3ad;
+    --accent:#33d1a0; --accent-2:#7aa8ff; --danger:#ff7676; --grid:#1b1f27;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.35; letter-spacing:0.1px;
+  }
+  /* Layout */
+  .wrap{
+    max-width:900px; margin:0 auto; padding:20px 14px 28px; display:grid; gap:14px;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/32px 100%;
+  }
+  header{
+    display:grid; grid-template-columns: 1fr auto; gap:10px;
+    border-bottom:1px solid var(--grid); padding-bottom:10px; align-items:end;
+  }
+  .head-left h1{margin:0; font-size:clamp(22px,6vw,38px); font-weight:800; letter-spacing:-0.5px}
+  .head-left .sub{color:var(--muted); font-size:14px}
+  .head-right{display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right}
+  .now{color:var(--text); font-weight:700; font-size:14px}
+  .examline{color:var(--muted); font-size:13px}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel); border:1px solid var(--grid); border-radius:10px; padding:14px}
+  .card h2{margin:2px 0 8px 0; font-size:12px; text-transform:uppercase; letter-spacing:1.3px; color:var(--muted); font-weight:700}
+
+  /* Stopwatch */
+  .time{font-variant-numeric:tabular-nums; font-size:clamp(34px,12vw,84px); font-weight:800; letter-spacing:1px; margin:6px 0 10px}
+  .controls{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    appearance:none; border:1px solid var(--grid); color:var(--text); background:#0e1117;
+    border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer;
+    transition:transform .02s ease, background .15s ease, border-color .15s ease;
+    font-size:14px;
+  }
+  button:hover{background:#0b0e13;border-color:#2a3140}
+  button:active{transform:translateY(1px)}
+  .primary{background:var(--accent); color:#0c1413; border-color:transparent}
+  .primary:hover{background:#2bc098}
+  .danger{background:#1c1212; border-color:#3b1b1b; color:#ffb8b8}
+  .ghost{background:#0e1117}
+
+  .entries{display:flex; flex-direction:column; gap:8px; margin-top:10px; max-height:280px; overflow:auto; scrollbar-width:thin}
+  .entry{display:flex; gap:8px; align-items:baseline; background:#10141b; border:1px solid var(--grid); border-radius:8px; padding:8px 10px}
+  .entry .dur{color:var(--accent); font-weight:800}
+  .entry .note{flex:1}
+  .entry .ts{color:var(--muted); font-size:12px}
+
+  /* Todo */
+  .todo-input{display:flex; gap:8px; margin-bottom:8px}
+  .todo-input input{flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--grid); background:#0e1117; color:var(--text); font-size:14px}
+  .todos{display:flex; flex-direction:column; gap:8px; max-height:280px; overflow:auto}
+  .todo{display:flex; align-items:center; gap:8px; background:#10141b; border:1px solid var(--grid); border-radius:8px; padding:8px 10px}
+  .todo input[type="checkbox"]{width:18px; height:18px; accent-color:var(--accent)}
+  .todo .txt{flex:1}
+  .todo .txt.done{text-decoration:line-through; color:var(--muted)}
+  .todo .del{color:#ff9a9a; background:#1f1414; border-color:#3b1b1b}
+
+  /* Countdowns */
+  .countdowns{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media (max-width:600px){ .countdowns{grid-template-columns:1fr} }
+  .count{background:#10141b; border:1px solid var(--grid); border-radius:8px; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .count .label{font-weight:800; text-transform:lowercase}
+  .count .days{font-variant-numeric:tabular-nums; font-weight:800; font-size:22px; color:var(--accent-2)}
+
+  #exportTarget{padding:12px; background:var(--panel); border:1px dashed #2a3040; border-radius:8px; margin-top:10px; color:var(--muted); font-size:13px}
+  footer{margin-top:6px; padding-top:10px; border-top:1px solid var(--grid); color:var(--muted); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .quote{font-size:13px}
+  .handle{font-size:13px; color:var(--text)}
+  /* Mobile tweaks */
+  @media (max-width:420px){
+    .head-right{align-items:flex-start; text-align:left}
+    header{grid-template-columns:1fr}
+    .controls button{flex:1 1 auto}
+    .time{font-size:56px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-left">
+        <h1>My Prep</h1>
+        <div class="sub">One page. One focus.</div>
+      </div>
+      <div class="head-right">
+        <div class="now" id="nowStr">—</div>
+        <div class="examline">NID Dec 21 • UCEED Jan 18</div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- Stopwatch + Entries -->
+      <div class="card">
+        <h2>Stopwatch</h2>
+        <div class="time" id="time">00:00:00</div>
+        <div class="controls">
+          <button id="startBtn" class="primary">Start</button>
+          <button id="stopBtn" class="ghost">Stop & Log</button>
+          <button id="resetBtn" class="danger">Reset</button>
+          <button id="exportBtn" class="ghost">Export</button>
+          <button id="clearAllBtn" class="danger">Clear</button>
+        </div>
+        <div class="entries" id="entries"></div>
+
+        <div id="exportTarget">
+          Export shares today’s totals, entries, todos, and countdowns as a clean JPEG.
+        </div>
+      </div>
+
+      <!-- Todo + Countdowns -->
+      <div class="card">
+        <h2>Todo</h2>
+        <div class="todo-input">
+          <input id="todoText" placeholder="Type and hit Enter…"/>
+          <button id="addTodo" class="primary">Add</button>
+        </div>
+        <div class="todos" id="todos"></div>
+
+        <h2 style="margin-top:12px">Countdowns</h2>
+        <div class="countdowns">
+          <div class="count">
+            <div class="label">nid</div>
+            <div class="days" id="nidDays">—</div>
+          </div>
+          <div class="count">
+            <div class="label">uceed</div>
+            <div class="days" id="uceedDays">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="quote" id="quote"></div>
+      <div class="handle">@raksh.designs</div>
+    </footer>
+  </div>
+
+<script>
+/* Quotes: short + blunt */
+const QUOTES = [
+  "Show up. Small steps, daily.",
+  "You don’t need perfect. You need progress.",
+  "Attention is your edge.",
+  "Do the next 10 minutes well.",
+  "Momentum beats motivation.",
+  "Design is thinking made visual.",
+  "Start. Then refine.",
+  "Consistency compounds.",
+  "Less talk, more craft.",
+  "One focused hour matters."
+];
+function setQuote(){
+  const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('quote').textContent = "“" + q + "”";
+}
+setQuote();
+
+/* Current day and date (top-right) */
+function updateNow(){
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'short', day:'numeric' };
+  document.getElementById('nowStr').textContent = now.toLocaleString(undefined, opts);
+}
+updateNow();
+setInterval(updateNow, 60*1000);
+
+/* Stopwatch: wall-clock based for accuracy in background */
+let swRunning = false;
+let swStartWall = 0;
+let swAccumulated = 0;
+let swInterval = null;
+
+const timeEl = document.getElementById('time');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const resetBtn = document.getElementById('resetBtn');
+const entriesEl = document.getElementById('entries');
+
+function fmt(ms){
+  const total = Math.floor(ms/1000);
+  const h = Math.floor(total/3600).toString().padStart(2,'0');
+  const m = Math.floor((total%3600)/60).toString().padStart(2,'0');
+  const s = (total%60).toString().padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+function swNow(){ return swRunning ? (Date.now() - swStartWall + swAccumulated) : swAccumulated; }
+function renderTime(){ timeEl.textContent = fmt(swNow()); }
+function start(){
+  if (swRunning) return;
+  swRunning = true; swStartWall = Date.now();
+  if (swInterval) clearInterval(swInterval);
+  swInterval = setInterval(renderTime, 250);
+  renderTime();
+}
+function stop(){
+  if (!swRunning && swAccumulated===0) return;
+  if (swRunning){
+    swAccumulated += Date.now() - swStartWall;
+    swRunning = false; swStartWall = 0;
+    if (swInterval){ clearInterval(swInterval); swInterval = null; }
+  }
+  const duration = swAccumulated;
+  if (duration < 1000){ renderTime(); return; }
+  const what = prompt("What did you do?");
+  const note = (what && what.trim()) ? what.trim() : "Unlabeled work";
+  addEntry(duration, note);
+  saveAll();
+  swAccumulated = 0; renderTime();
+}
+function resetAll(){
+  swRunning = false; swStartWall = 0; swAccumulated = 0;
+  if (swInterval){ clearInterval(swInterval); swInterval = null; }
+  renderTime();
+}
+
+startBtn.addEventListener('click', start);
+stopBtn.addEventListener('click', stop);
+resetBtn.addEventListener('click', resetAll);
+
+/* Entries + storage */
+let entries = JSON.parse(localStorage.getItem('fc_entries')||'[]');
+let todos = JSON.parse(localStorage.getItem('fc_todos')||'[]');
+
+function addEntry(ms, note){
+  const e = { ms, note, ts: new Date().toISOString() };
+  entries.unshift(e);
+  renderEntries();
+}
+function renderEntries(){
+  entriesEl.innerHTML = '';
+  for (const e of entries){
+    const row = document.createElement('div');
+    row.className = 'entry';
+    const dur = document.createElement('div'); dur.className = 'dur'; dur.textContent = fmt(e.ms);
+    const note = document.createElement('div'); note.className = 'note'; note.textContent = e.note;
+    const ts = document.createElement('div'); ts.className = 'ts'; ts.textContent = new Date(e.ts).toLocaleString();
+    row.append(dur, note, ts);
+    entriesEl.appendChild(row);
+  }
+  updateExportTarget();
+}
+function saveAll(){
+  localStorage.setItem('fc_entries', JSON.stringify(entries));
+  localStorage.setItem('fc_todos', JSON.stringify(todos));
+}
+function clearAll(){
+  if (!confirm("Clear all entries and todos?")) return;
+  entries = []; todos = [];
+  saveAll(); renderEntries(); renderTodos(); updateExportTarget();
+}
+document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+
+/* Todos */
+const todosEl = document.getElementById('todos');
+const todoText = document.getElementById('todoText');
+document.getElementById('addTodo').addEventListener('click', addTodoFromInput);
+todoText.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter'){ e.preventDefault(); addTodoFromInput(); }
+});
+function addTodoFromInput(){
+  const t = todoText.value.trim(); if(!t) return;
+  todos.unshift({ text:t, done:false, id: crypto.randomUUID() });
+  todoText.value=''; saveAll(); renderTodos(); updateExportTarget();
+}
+function renderTodos(){
+  todosEl.innerHTML = '';
+  for (const t of todos){
+    const row = document.createElement('div'); row.className = 'todo';
+    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = t.done;
+    cb.addEventListener('change', ()=>{ t.done = cb.checked; saveAll(); renderTodos(); updateExportTarget(); });
+    const txt = document.createElement('div'); txt.className = 'txt'+(t.done?' done':''); txt.textContent = t.text;
+    const del = document.createElement('button'); del.className='del'; del.textContent='Delete';
+    del.addEventListener('click', ()=>{ todos = todos.filter(x=>x.id!==t.id); saveAll(); renderTodos(); updateExportTarget(); });
+    row.append(cb, txt, del); todosEl.appendChild(row);
+  }
+}
+
+/* Countdowns — hours and minutes left; wall-clock + visibility fix */
+const nidDate = new Date('2025-12-21T10:00:00+05:30'); // NID Prelims
+const uceedDate = new Date('2026-01-18T09:00:00+05:30'); // UCEED
+const nidDaysEl = document.getElementById('nidDays');
+const uceedDaysEl = document.getElementById('uceedDays');
+
+function fmtHMLeft(target){
+  const now = Date.now();
+  let diff = Math.max(0, target.getTime() - now);
+  const hours = Math.floor(diff / (1000*60*60));
+  diff -= hours*(1000*60*60);
+  const minutes = Math.floor(diff / (1000*60));
+  return `${hours}h:${String(minutes).padStart(2,'0')}m`;
+}
+function updateCountdowns(){
+  nidDaysEl.textContent = fmtHMLeft(nidDate);
+  uceedDaysEl.textContent = fmtHMLeft(uceedDate);
+}
+let countdownInterval = setInterval(updateCountdowns, 30000);
+updateCountdowns();
+document.addEventListener('visibilitychange', ()=>{
+  if (document.visibilityState === 'visible'){
+    updateCountdowns();
+    renderTime();
+  }
+});
+
+/* Export to JPEG — clean typographic summary */
+document.getElementById('exportBtn').addEventListener('click', ()=>{ exportAsJPEG().catch(()=>alert('Export failed. Try again.')); });
+async function exportAsJPEG(){
+  const pad = 28, width = 1080;
+  const lines = [];
+  const dateStr = new Date().toLocaleString();
+  const totalMs = entries.reduce((a,b)=>a+b.ms,0);
+  lines.push({type:'title', text:'My Prep — Session'});
+  lines.push({type:'meta', text:dateStr});
+  lines.push({type:'section', text:'Summary'});
+  lines.push({type:'line', text:`Total time: ${fmt(totalMs)}`});
+  lines.push({type:'line', text:`nid: ${fmtHMLeft(nidDate)} · uceed: ${fmtHMLeft(uceedDate)}`});
+  if(entries.length){
+    lines.push({type:'section', text:'Entries'});
+    for (const e of entries.slice(0,12)){
+      const d = new Date(e.ts).toLocaleTimeString();
+      lines.push({type:'line', text:`${fmt(e.ms)} — ${e.note} (${d})`});
+    }
+  }
+  if(todos.length){
+    lines.push({type:'section', text:'Todos'});
+    for (const t of todos.slice(0,12)){
+      lines.push({type:'line', text:`${t.done?'[x]':'[ ]'} ${t.text}`});
+    }
+  }
+  lines.push({type:'foot', text:'“Momentum beats motivation.”'});
+
+  // Height
+  const lh = 40; let height = pad*2 + 20;
+  for (const L of lines){
+    if (L.type==='title') height += 56;
+    else if (L.type==='meta') height += 28;
+    else if (L.type==='section') height += 36;
+    else if (L.type==='line') height += lh;
+    else if (L.type==='foot') height += 40;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  const ctx = canvas.getContext('2d');
+
+  // Background + grid
+  ctx.fillStyle = '#0f1115'; ctx.fillRect(0,0,width,height);
+  ctx.strokeStyle = '#1b1f27'; ctx.lineWidth = 1;
+  for (let y=0; y<height; y+=32){ ctx.beginPath(); ctx.moveTo(0,y+0.5); ctx.lineTo(width,y+0.5); ctx.stroke(); }
+  for (let x=0; x<width; x+=32){ ctx.beginPath(); ctx.moveTo(x+0.5,0); ctx.lineTo(x+0.5,height); ctx.stroke(); }
+
+  // Text
+  let y = pad + 8;
+  ctx.fillStyle = '#e8e9ec'; ctx.font = '800 44px Inter, system-ui, sans-serif';
+  function wrapText(ctx, text, x, y, maxW, lineH){
+    const words = text.split(' '); let line='';
+    for (let n=0;n<words.length;n++){
+      const test = line + words[n] + ' ';
+      if (ctx.measureText(test).width > maxW && n>0){ ctx.fillText(line, x, y); line = words[n] + ' '; y += lineH; }
+      else { line = test; }
+    }
+    ctx.fillText(line.trim(), x, y);
+    return y;
+  }
+  for (const L of lines){
+    if (L.type==='title'){ ctx.font='800 44px Inter, system-ui, sans-serif'; ctx.fillStyle='#e8e9ec'; ctx.fillText(L.text, pad, y+36); y+=56; }
+    else if (L.type==='meta'){ ctx.font='400 16px Inter, system-ui, sans-serif'; ctx.fillStyle='#9aa3ad'; ctx.fillText(L.text, pad, y+18); y+=28; }
+    else if (L.type==='section'){ ctx.font='700 18px Inter, system-ui, sans-serif'; ctx.fillStyle='#7aa8ff'; ctx.fillText(L.text.toUpperCase(), pad, y+20); y+=36; }
+    else if (L.type==='line'){ ctx.font='600 18px Inter, system-ui, sans-serif'; ctx.fillStyle='#e8e9ec'; y = wrapText(ctx, L.text, pad, y+18, width-pad*2, 22); y+=22; }
+    else if (L.type==='foot'){ ctx.font='400 16px Inter, system-ui, sans-serif'; ctx.fillStyle='#9aa3ad'; ctx.fillText(L.text, pad, y+20); y+=40; }
+  }
+
+  const link = document.createElement('a');
+  link.download = `my-prep-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.jpg`;
+  link.href = canvas.toDataURL('image/jpeg', 0.92);
+  link.click();
+}
+
+/* Export preview */
+function updateExportTarget(){
+  const total = entries.reduce((a,b)=>a+b.ms,0);
+  const html = `
+    <div style="display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap">
+      <div><strong>Total today:</strong> ${fmt(total)}</div>
+      <div style="color:#9aa3ad">nid: ${fmtHMLeft(nidDate)} · uceed: ${fmtHMLeft(uceedDate)}</div>
+    </div>
+    <div style="margin-top:6px; color:#9aa3ad; font-size:13px">
+      ${entries.slice(0,5).map(e=>`${fmt(e.ms)} — ${e.note}`).join(' · ')}
+      ${entries.length>5 ? ' · …' : ''}
+    </div>
+  `;
+  document.getElementById('exportTarget').innerHTML = html;
+}
+
+/* Init */
+renderEntries();
+renderTodos();
+renderTime();
+updateCountdowns();
+updateExportTarget();
+
+/* Keyboard shortcuts */
+window.addEventListener('keydown', (e)=>{
+  if (['INPUT','TEXTAREA'].includes((e.target.tagName||''))) return;
+  if (e.key===' '){ e.preventDefault(); if (swRunning) stop(); else start(); }
+  if (e.key==='r'){ resetAll(); }
+  if (e.key==='e'){ exportAsJPEG().catch(()=>{}); }
+});
+</script>
+</body>
+</html>
