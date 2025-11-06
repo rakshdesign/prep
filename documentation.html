@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Prep — Docs</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#14171d; --text:#e8e9ec; --muted:#9aa3ad;
+      --accent:#33d1a0; --accent-2:#7aa8ff; --danger:#ff7676; --grid:#1b1f27;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.5; letter-spacing:0.1px;
+    }
+    .wrap{
+      max-width:900px; margin:0 auto; padding:24px 14px 40px; display:grid; gap:16px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 32px,
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/32px 100%;
+    }
+    header{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--grid); padding-bottom:10px;
+    }
+    h1{margin:0; font-size:clamp(22px,5vw,36px); font-weight:800; letter-spacing:-0.4px}
+    .sub{color:var(--muted); font-size:14px}
+    .top-actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--grid); color:var(--text); background:#0e1117;
+      border-radius:8px; padding:9px 12px; font-weight:700; cursor:pointer;
+      text-decoration:none; font-size:14px;
+    }
+    .btn:hover{background:#0b0e13;border-color:#2a3140}
+    .btn.primary{background:var(--accent); color:#0c1413; border-color:transparent}
+    .btn.primary:hover{background:#2bc098}
+
+    .card{
+      background:var(--panel); border:1px solid var(--grid); border-radius:10px; padding:14px;
+    }
+    .card h2{
+      margin:2px 0 10px 0; font-size:14px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); font-weight:700
+    }
+    p{margin:8px 0 12px}
+    ul{margin:8px 0 12px 18px}
+    li{margin:6px 0}
+    .muted{color:var(--muted)}
+    .code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      background:#0e1117; border:1px solid var(--grid); border-radius:8px; padding:10px; overflow:auto;
+      font-size:13px; color:#e8e9ec;
+    }
+
+    /* Mockups */
+    .mock{
+      border:1px solid var(--grid); border-radius:10px; background:#10141b; padding:14px; margin-top:10px;
+    }
+    .mock .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .mock .label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:1.2px}
+    .mock .time{font-variant-numeric:tabular-nums; font-size:38px; font-weight:800; letter-spacing:1px}
+    .mock button{
+      appearance:none; border:1px solid var(--grid); color:var(--text); background:#0e1117;
+      border-radius:8px; padding:8px 12px; font-weight:700; font-size:13px; cursor:default;
+    }
+    .mock .primary{background:var(--accent); color:#0c1413; border-color:transparent}
+    .mock .danger{background:#1c1212; border-color:#3b1b1b; color:#ffb8b8}
+    .mock .ghost{background:#0e1117}
+
+    .mock .entry{
+      display:flex; gap:8px; align-items:baseline; background:#0f151c;
+      border:1px solid var(--grid); border-radius:8px; padding:8px 10px; margin-top:8px
+    }
+    .mock .dur{color:var(--accent); font-weight:800}
+    .mock .note{flex:1}
+    .mock .ts{color:var(--muted); font-size:12px}
+
+    .mock .todo{
+      display:flex; align-items:center; gap:8px; background:#0f151c;
+      border:1px solid var(--grid); border-radius:8px; padding:8px 10px; margin-top:8px
+    }
+    .mock .checkbox{
+      width:16px; height:16px; border:1px solid var(--grid); border-radius:4px; background:#0e1117
+    }
+    .mock .todo.done .txt{color:var(--muted); text-decoration:line-through}
+
+    .mock .countdowns{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px}
+    .mock .count{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid var(--grid); border-radius:8px; background:#0f151c}
+    .mock .clabel{font-weight:800; text-transform:lowercase}
+    .mock .cval{font-variant-numeric:tabular-nums; font-weight:800; color:var(--accent-2)}
+
+    .mock .export{
+      border:1px dashed #2a3040; border-radius:8px; background:#0e1117; color:var(--muted); padding:10px; font-size:13px; margin-top:8px
+    }
+
+    /* Presence badge mock */
+    .mock .presence{
+      display:inline-flex; align-items:center; gap:8px; border:1px solid var(--grid); border-radius:10px;
+      background:#14171d; padding:6px 10px; margin-top:8px
+    }
+    .mock .dot{width:8px; height:8px; border-radius:50%; background:#33d1a0}
+
+    footer{
+      margin-top:8px; padding-top:10px; border-top:1px solid var(--grid); color:var(--muted);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap
+    }
+    .handle a{color:#e8e9ec; text-decoration:none}
+    .handle a:hover{text-decoration:underline}
+
+    @media (max-width:640px){
+      .top-actions{flex-direction:column}
+      .btn{width:100%; text-align:center}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>My Prep — Documentation</h1>
+        <div class="sub">A minimal focus timer with logging, todo, countdown, JPEG export, and a simple presence badge.</div>
+      </div>
+      <div class="top-actions">
+        <a class="btn" href="./index.html">Back to app</a>
+        <a class="btn primary" href="https://www.instagram.com/raksh.designs/" target="_blank" rel="noopener noreferrer">@raksh.designs</a>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Getting started</h2>
+      <p>Open the app, press Start to begin timing, Stop & Log to add a short note, and Reset to clear the current stopwatch session.</p>
+      <ul>
+        <li>Use the Todo box to add tasks; check to mark done, Delete to remove.</li>
+        <li>Countdowns show hours and minutes left for nid and uceed.</li>
+        <li>Export creates a clean JPEG summary with totals, entries, todos, and countdowns.</li>
+      </ul>
+
+      <!-- Mockup: Overview -->
+      <div class="mock">
+        <div class="label">Overview</div>
+        <div class="row" style="justify-content:space-between; margin-top:6px">
+          <div class="time">00:42:17</div>
+          <div class="row">
+            <button class="primary">Start</button>
+            <button class="ghost">Stop & Log</button>
+            <button class="danger">Reset</button>
+            <button class="ghost">Export</button>
+          </div>
+        </div>
+        <div class="export" style="margin-top:10px">Export shares today’s totals, entries, todos, and countdowns as a clean JPEG.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Stopwatch & logging</h2>
+      <p>The stopwatch is wall‑clock based, so it stays accurate even if the tab sleeps; on Stop, enter what you did to log an entry.</p>
+      <ul>
+        <li>Space toggles Start/Stop, R resets, E exports.</li>
+        <li>Entries persist locally in your browser.</li>
+      </ul>
+
+      <!-- Mockup: Entries -->
+      <div class="mock">
+        <div class="label">Entries</div>
+        <div class="entry">
+          <div class="dur">00:25:04</div>
+          <div class="note">Thumbnail sketches</div>
+          <div class="ts">09:32 AM</div>
+        </div>
+        <div class="entry">
+          <div class="dur">00:17:13</div>
+          <div class="note">Gesture studies</div>
+          <div class="ts">10:12 AM</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Todos</h2>
+      <p>Add tasks, check to mark complete, or delete to remove them; tasks are stored locally and included in the export summary.</p>
+      <ul>
+        <li>Enter to add quickly; minimal friction for low attention span.</li>
+        <li>Completed tasks appear struck through to reduce visual load.</li>
+      </ul>
+
+      <!-- Mockup: Todo list -->
+      <div class="mock">
+        <div class="label">Todo</div>
+        <div class="todo">
+          <div class="checkbox" aria-hidden="true"></div>
+          <div class="txt">Sketch 3 thumbnails</div>
+          <button class="danger">Delete</button>
+        </div>
+        <div class="todo done">
+          <div class="checkbox" aria-hidden="true" style="background:#162018; border-color:#1f3a2f"></div>
+          <div class="txt">Read nid brief</div>
+          <button class="danger">Delete</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Countdowns</h2>
+      <p>The app shows remaining time as hours:minutes to nid and uceed; labels are intentionally lowercase and compact.</p>
+      <ul>
+        <li>Updates every 30 seconds and on tab focus.</li>
+        <li>Dates: nid (Dec 21, 2025), uceed (Jan 18, 2026).</li>
+      </ul>
+
+      <!-- Mockup: Countdowns -->
+      <div class="mock">
+        <div class="label">Countdowns</div>
+        <div class="countdowns">
+          <div class="count">
+            <div class="clabel">nid</div>
+            <div class="cval">432h:15m</div>
+          </div>
+          <div class="count">
+            <div class="clabel">uceed</div>
+            <div class="cval">846h:42m</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Export to JPEG</h2>
+      <p>Click Export to generate a shareable summary image with a typographic grid background; it includes totals, entries, todos, and countdowns.</p>
+      <ul>
+        <li>Images render client‑side via Canvas; the file downloads as a .jpg.</li>
+        <li>Filenames include timestamp for easy archiving.</li>
+      </ul>
+
+      <!-- Mockup: Export preview -->
+      <div class="mock">
+        <div class="label">Export preview (typographic)</div>
+        <div class="export">
+          Total today: 00:42:17 · nid: 432h:15m · uceed: 846h:42m<br>
+          00:25:04 — Thumbnail sketches · 00:17:13 — Gesture studies
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Presence badge</h2>
+      <p>A bottom‑right badge displays a simple “studying now” count with day/night ranges for ambient motivation.</p>
+      <ul>
+        <li>Day (06:00–22:59): random 1–30; night (23:00–05:59): random 1–15.</li>
+        <li>Refreshes every 3 minutes and on tab focus.</li>
+      </ul>
+
+      <!-- Mockup: Presence badge -->
+      <div class="mock">
+        <div class="label">Presence</div>
+        <div class="presence">
+          <span class="dot"></span>
+          <span>18 studying now</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Troubleshooting</h2>
+      <ul>
+        <li>No export file: ensure the browser allows downloads and try again.</li>
+        <li>Clock drift after sleep: focus the tab; the timer and countdowns refresh immediately.</li>
+        <li>Entries/todos missing: localStorage is per‑browser; clearing site data removes logs.</li>
+      </ul>
+
+      <!-- Mockup: Troubleshooting tips (compact) -->
+      <div class="mock">
+        <div class="label">Tips</div>
+        <div class="code">Space = Start/Stop · R = Reset · E = Export</div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="muted">Last updated: v1.0</div>
+      <div class="handle"><a href="https://www.instagram.com/raksh.designs/" target="_blank" rel="noopener noreferrer">@raksh.designs</a></div>
+    </footer>
+  </div>
+</body>
+</html>
